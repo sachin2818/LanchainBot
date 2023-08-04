@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot AI</title>
+</head>
+<body>
+    <h1>Chatbot AI</h1>
+    <div id="chatbox">
+        <div class="message bot">Hello! I am your AI chatbot. How can I help you today?</div>
+    </div>
+    <input type="text" id="userInput" placeholder="Type your message here...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            if (userInput !== "") {
+                addMessage(userInput, "user");
+                processMessage(userInput);
+                document.getElementById("userInput").value = "";
+            }
+        }
+
+        function addMessage(message, sender) {
+            var chatbox = document.getElementById("chatbox");
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "message " + sender;
+            messageDiv.innerHTML = sender + ": " + message;
+            chatbox.appendChild(messageDiv);
+        }
+
+        function processMessage(message) {
+            // You can implement your AI logic here to generate a response from the chatbot
+            // For simplicity, we'll just provide a random response.
+            var formData = new FormData();
+            formData.append("query", message);
+
+            var xhr = new XMLHttpRequest();
+            var url = "/query"; 
+            xhr.open("POST", url, true);
+
+            xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                var responseData = JSON.parse(xhr.responseText);
+                console.log("Response from server:", xhr.responseText);
+                addMessage(responseData["answer"], "bot");
+                } else {
+                console.error("Error:", xhr.status);
+                addMessage("Unable to process your request", "bot");
+                }
+            }
+            };
+
+            xhr.send(formData);
+            // var responses = [
+            //     "I'm not sure what you mean.",
+            //     "Please elaborate on that.",
+            //     "Sorry, I cannot provide the information you requested.",
+            //     "That's interesting!",
+            //     "I need more data to respond accurately."
+            // ];
+
+            // var randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            // setTimeout(function () {
+            //     addMessage(randomResponse, "bot");
+            // }, 1000);
+        }
+    </script>
+</body>
+</html>
